@@ -1,12 +1,19 @@
 import { Model } from "mongoose";
 import USER_ROLE from "../../constants/userRole";
 
+export type TRegisterUserInput = Pick<TUser, "email" | "password" | "confirmPassword">;
+
 export interface TUser {
+  fullName: string
   email: string;
+  username: string;
+  gender: string
   password: string;
-  name: string;
-  role: "lawyer" | "admin" | "client";
-  status: "in-progress" | "blocked";
+  confirmPassword: string;
+  image: string;
+  phoneNumber: string;
+  character: string;
+  role: "admin" | "user";
   isDeleted: boolean;
 }
 
