@@ -26,10 +26,10 @@ const loginUser = async (payload: TLoginUser) => {
   }
 
   // Check if user is blocked
-  const userStatus = user?.status;
-  if (userStatus === "blocked") {
-    throw new ApiError(httpStatus.FORBIDDEN, "User is blocked!");
-  }
+  // const userStatus = user?.status;
+  // if (userStatus === "blocked") {
+  //   throw new ApiError(httpStatus.FORBIDDEN, "User is blocked!");
+  // }
 
   // Check if password is correct
   if (!(await bcrypt.compare(payload?.password, user?.password))) {
@@ -78,10 +78,10 @@ const changePassword = async (
   }
 
   // Check if user is blocked
-  const userStatus = user?.status;
-  if (userStatus === "blocked") {
-    throw new ApiError(httpStatus.FORBIDDEN, "User is blocked!");
-  }
+  // const userStatus = user?.status;
+  // if (userStatus === "blocked") {
+  //   throw new ApiError(httpStatus.FORBIDDEN, "User is blocked!");
+  // }
 
   // Check if password is correct
   if (!(await bcrypt.compare(payload?.oldPassword, user?.password))) {
@@ -124,10 +124,10 @@ const refreshToken = async (token: string) => {
   }
 
   // checking if the user is blocked
-  const userStatus = user?.status;
-  if (userStatus === "blocked") {
-    throw new ApiError(httpStatus.FORBIDDEN, "This user is blocked ! !");
-  }
+  // const userStatus = user?.status;
+  // if (userStatus === "blocked") {
+  //   throw new ApiError(httpStatus.FORBIDDEN, "This user is blocked ! !");
+  // }
 
   const jwtPayload = {
     userId: user.id,
@@ -160,10 +160,10 @@ const forgetPassword = async (email: string) => {
   }
 
   // checking if the user is blocked
-  const userStatus = user?.status;
-  if (userStatus === "blocked") {
-    throw new ApiError(httpStatus.FORBIDDEN, "This user is blocked ! !");
-  }
+  // const userStatus = user?.status;
+  // if (userStatus === "blocked") {
+  //   throw new ApiError(httpStatus.FORBIDDEN, "This user is blocked ! !");
+  // }
 
   const jwtPayload = {
     userId: user.id,

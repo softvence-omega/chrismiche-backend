@@ -46,7 +46,6 @@ const createAUserIntoDB = async (payload: Partial<TUser>) => {
     email: payload.email,
     password: hashedPassword,
     confirmPassword: hashedPassword, // stored but select: false
-    role: payload.role || "user",
   };
 
   // Optional: allow adding other fields if available

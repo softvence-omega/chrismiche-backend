@@ -1,4 +1,4 @@
-import { Model } from "mongoose";
+import { Date, Model } from "mongoose";
 import USER_ROLE from "../../constants/userRole";
 
 export type TRegisterUserInput = Pick<TUser, "email" | "password" | "confirmPassword">;
@@ -14,7 +14,9 @@ export interface TUser {
   phoneNumber: string;
   character: string;
   role: "admin" | "user";
+  passwordResetToken: string
+  passwordResetExpires: Date
   isDeleted: boolean;
 }
 
-export type TUserRole = keyof typeof USER_ROLE;
+// export type TUserRole = keyof typeof USER_ROLE;
