@@ -1,13 +1,12 @@
 import httpStatus from "http-status";
 import ApiError from "../../errors/ApiError";
-import { User } from "../user/user.model";
 import { TLoginUser } from "./auth.interface";
 import { JwtPayload } from "jsonwebtoken";
 import config from "../../config";
 import bcrypt from "bcrypt";
 import { createToken, verifyToken } from "./auth.utils";
-import { sendEmail } from "../../utils/sendEmail";
 import crypto from 'crypto';
+import { User } from "../user/user.model";
 
 const loginUser = async (payload: TLoginUser) => {
   const user = await User.findOne({ email: payload?.email }).select(
@@ -145,41 +144,6 @@ const refreshToken = async (token: string) => {
     accessToken,
   };
 };
-
-// const forgetPassword = async (email: string) => {
-//   // checking if the user exists
-//   console.log(email);
-//   console.log(await User.find());
-//   const user = await User.findOne({ email });
-//   if (!user) {
-//     throw new ApiError(httpStatus.NOT_FOUND, "This user is not found !");
-//   }
-//   // checking if the user is already deleted
-//   const isDeleted = user?.isDeleted;
-//   if (isDeleted) {
-//     throw new ApiError(httpStatus.FORBIDDEN, "This user is deleted !");
-//   }
-
-//   // checking if the user is blocked
-//   // const userStatus = user?.status;
-//   // if (userStatus === "blocked") {
-//   //   throw new ApiError(httpStatus.FORBIDDEN, "This user is blocked ! !");
-//   // }
-
-//   const jwtPayload = {
-//     userId: user.id,
-//     role: user.role,
-//   };
-
-//   const resetToken = createToken(
-//     jwtPayload,
-//     config.jwt_access_secret as string,
-//     1000 * 60 * 10 // 10 minutes
-//   );
-//   const resetUILink = `${config.reset_pass_ui_link}?id=${user.id}&token=${resetToken}`;
-//   console.log(resetUILink);
-//   sendEmail(user?.email, resetUILink);
-// };
 
 const forgetPassword = async (email: string) => {
   const user = await User.findOne({ email });

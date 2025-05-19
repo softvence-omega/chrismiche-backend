@@ -17,6 +17,8 @@ const createUserValidationSchema = z.object({
     image: z.string().optional(),
     phoneNumber: z.string().optional(),
     character: z.string().optional(),
+
+    
     role: z.enum(["admin", "user"]).default("user"),
   }),
 });

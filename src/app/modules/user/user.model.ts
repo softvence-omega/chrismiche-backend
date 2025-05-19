@@ -1,6 +1,6 @@
-import { Schema, model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 import { TUser } from "./user.interface";
-import crypto from "crypto";
+import bcrypt from "bcrypt";
 
 const userSchema = new Schema<TUser>(
   {
@@ -15,9 +15,7 @@ const userSchema = new Schema<TUser>(
       lowercase: true,
       trim: true,
     },
-    username: {
-      type: String,
-    },
+    username: { type: String, required: false },
     gender: {
       type: String,
       enum: ["male", "female", "other"], // optional enum for cleaner data
@@ -60,15 +58,28 @@ const userSchema = new Schema<TUser>(
   }
 );
 
-// Reset token generator method (optional if you use a service instead)
-// userSchema.methods.createPasswordResetToken = function () {
-//   const resetToken = crypto.randomBytes(32).toString("hex");
-//   this.passwordResetToken = crypto
-//     .createHash("sha256")
-//     .update(resetToken)
-//     .digest("hex");
-//   this.passwordResetExpires = Date.now() + 15 * 60 * 1000; // 15 mins
-//   return resetToken;
-// };
+userSchema.pre(
+  "save",
+  async function (next: (err?: mongoose.CallbackError) => void) {
+    const user = this as any; // or use: this as TUser & mongoose.Document;
+
+    if (!user.isModified("password")) {
+      return next();
+    }
+
+    try {
+      const saltRounds = 12;
+      const hashedPassword = await bcrypt.hash(user.password, saltRounds);
+      user.password = hashedPassword;
+
+      // Remove confirmPassword field so it’s not stored
+      delete user.confirmPassword;
+
+      next();
+    } catch (error) {
+      next(error as mongoose.CallbackError);
+    }
+  }
+);
 
 export const User = model<TUser>("User", userSchema);

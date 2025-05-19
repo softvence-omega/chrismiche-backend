@@ -38,10 +38,17 @@ const forgetPasswordValidationSchema = z.object({
   }),
 });
 
-const resetPasswordValidationSchema = z.object({
+// const resetPasswordValidationSchema = z.object({
+//   body: z.object({
+//     resetToken: z.string(),
+//     password: z.string().min(6),
+//   }),
+// });
+
+export const resetPasswordValidationSchema = z.object({
   body: z.object({
-    resetToken: z.string(),
-    password: z.string().min(6),
+    newPassword: z.string().min(6, "New password is required"),
+    confirmPassword: z.string().min(6, "Confirm password is required"),
   }),
 });
 

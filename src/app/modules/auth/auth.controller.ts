@@ -3,6 +3,9 @@ import { catchAsync } from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { AuthServices } from "./auth.service";
 import config from "../../config";
+import ApiError from "../../errors/ApiError";
+import { User } from "../user/user.model";
+import crypto from "crypto"
 
 const loginUser = catchAsync(async (req, res) => {
   const result = await AuthServices.loginUser(req.body);
@@ -44,15 +47,6 @@ const refreshToken = catchAsync(async (req, res) => {
   });
 });
 
-// const forgetPassword = catchAsync(async (req, res) => {
-//   const result = await AuthServices.forgetPassword(req.body.email);
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: "Reset link is sent to client's mail successfully!",
-//     data: result,
-//   });
-// });
 
 const forgetPassword = catchAsync(async (req, res) => {
   const result = await AuthServices.forgetPassword(req.body.email);
@@ -65,14 +59,48 @@ const forgetPassword = catchAsync(async (req, res) => {
 });
 
 const resetPassword = catchAsync(async (req, res) => {
-  const result = await AuthServices.resetPassword(req.body);
+  const { token } = req.params;
+
+  if (!token) {
+    throw new ApiError(400, "Reset token is missing");
+  }
+
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: new Date() },
+  });
+
+  if (!user) {
+    throw new ApiError(400, "Invalid or expired password reset token");
+  }
+
+  const { newPassword, confirmPassword } = req.body;
+
+  if (newPassword !== confirmPassword) {
+    throw new ApiError(400, "Passwords do not match");
+  }
+
+  user.password = newPassword;
+  user.confirmPassword = confirmPassword;
+
+  // Mark password as modified so pre-save hook runs and hashes it
+  user.markModified("password");
+
+  user.passwordResetToken = null;
+  user.passwordResetExpires = null;
+
+  await user.save();
+
   sendResponse(res, {
-    statusCode: 200,
+    statusCode: httpStatus.OK,
     success: true,
-    message: 'Password reset successful',
-    data: result,
+    message: "Password reset successful",
+    data: null, // you can avoid sending back the user object for security
   });
 });
+
 
 export const AuthControllers = {
   loginUser,
