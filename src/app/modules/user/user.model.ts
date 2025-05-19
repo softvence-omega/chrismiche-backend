@@ -52,8 +52,8 @@ const userSchema = new Schema<TUser>(
       type: Boolean,
       default: false,
     },
-    passwordResetToken: { type: String },
-    passwordResetExpires: { type: Date },
+    passwordResetToken: { type: String, default: null },
+    passwordResetExpires: { type: Date, default: null },
   },
   {
     timestamps: true,
@@ -61,11 +61,14 @@ const userSchema = new Schema<TUser>(
 );
 
 // Reset token generator method (optional if you use a service instead)
-userSchema.methods.createPasswordResetToken = function () {
-  const resetToken = crypto.randomBytes(32).toString("hex");
-  this.passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
-  this.passwordResetExpires = Date.now() + 15 * 60 * 1000; // 15 mins
-  return resetToken;
-};
+// userSchema.methods.createPasswordResetToken = function () {
+//   const resetToken = crypto.randomBytes(32).toString("hex");
+//   this.passwordResetToken = crypto
+//     .createHash("sha256")
+//     .update(resetToken)
+//     .digest("hex");
+//   this.passwordResetExpires = Date.now() + 15 * 60 * 1000; // 15 mins
+//   return resetToken;
+// };
 
 export const User = model<TUser>("User", userSchema);

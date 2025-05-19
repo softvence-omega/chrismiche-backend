@@ -7,6 +7,7 @@ import config from "../../config";
 import bcrypt from "bcrypt";
 import { createToken, verifyToken } from "./auth.utils";
 import { sendEmail } from "../../utils/sendEmail";
+import crypto from 'crypto';
 
 const loginUser = async (payload: TLoginUser) => {
   const user = await User.findOne({ email: payload?.email }).select(
@@ -145,39 +146,71 @@ const refreshToken = async (token: string) => {
   };
 };
 
+// const forgetPassword = async (email: string) => {
+//   // checking if the user exists
+//   console.log(email);
+//   console.log(await User.find());
+//   const user = await User.findOne({ email });
+//   if (!user) {
+//     throw new ApiError(httpStatus.NOT_FOUND, "This user is not found !");
+//   }
+//   // checking if the user is already deleted
+//   const isDeleted = user?.isDeleted;
+//   if (isDeleted) {
+//     throw new ApiError(httpStatus.FORBIDDEN, "This user is deleted !");
+//   }
+
+//   // checking if the user is blocked
+//   // const userStatus = user?.status;
+//   // if (userStatus === "blocked") {
+//   //   throw new ApiError(httpStatus.FORBIDDEN, "This user is blocked ! !");
+//   // }
+
+//   const jwtPayload = {
+//     userId: user.id,
+//     role: user.role,
+//   };
+
+//   const resetToken = createToken(
+//     jwtPayload,
+//     config.jwt_access_secret as string,
+//     1000 * 60 * 10 // 10 minutes
+//   );
+//   const resetUILink = `${config.reset_pass_ui_link}?id=${user.id}&token=${resetToken}`;
+//   console.log(resetUILink);
+//   sendEmail(user?.email, resetUILink);
+// };
+
 const forgetPassword = async (email: string) => {
-  // checking if the user exists
-  console.log(email);
-  console.log(await User.find());
   const user = await User.findOne({ email });
-  if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, "This user is not found !");
-  }
-  // checking if the user is already deleted
-  const isDeleted = user?.isDeleted;
-  if (isDeleted) {
-    throw new ApiError(httpStatus.FORBIDDEN, "This user is deleted !");
-  }
+  if (!user) throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
 
-  // checking if the user is blocked
-  // const userStatus = user?.status;
-  // if (userStatus === "blocked") {
-  //   throw new ApiError(httpStatus.FORBIDDEN, "This user is blocked ! !");
-  // }
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 
-  const jwtPayload = {
-    userId: user.id,
-    role: user.role,
-  };
+  user.passwordResetToken = hashedToken;
+  user.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000);  // 10 mins
+  await user.save({ validateBeforeSave: false });
 
-  const resetToken = createToken(
-    jwtPayload,
-    config.jwt_access_secret as string,
-    1000 * 60 * 10 // 10 minutes
-  );
-  const resetUILink = `${config.reset_pass_ui_link}?id=${user.id}&token=${resetToken}`;
-  console.log(resetUILink);
-  sendEmail(user?.email, resetUILink);
+  return { resetToken }; // this will be returned to Flutter app
+};
+
+const resetPassword = async ({ resetToken, password }: { resetToken: string; password: string }) => {
+  const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: new Date() },
+  });
+
+  if (!user) throw new ApiError(httpStatus.BAD_REQUEST, 'Token is invalid or expired');
+
+  user.password = await bcrypt.hash(password, Number(config.bcrypt_salt_rounds));
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  await user.save();
+
+  return { email: user.email };
 };
 
 export const AuthServices = {
@@ -185,4 +218,5 @@ export const AuthServices = {
   changePassword,
   refreshToken,
   forgetPassword,
+  resetPassword,
 };
