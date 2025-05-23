@@ -61,7 +61,7 @@ const userSchema = new Schema<TUser>(
 userSchema.pre(
   "save",
   async function (next: (err?: mongoose.CallbackError) => void) {
-    const user = this as any; // or use: this as TUser & mongoose.Document;
+    const user = this as any; 
 
     if (!user.isModified("password")) {
       return next();
