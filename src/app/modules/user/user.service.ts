@@ -31,9 +31,9 @@ const createAUserIntoDB = async (payload: Partial<TUser>) => {
   }
 
   // Validate passwords
-  if (payload.password !== payload.confirmPassword) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Passwords do not match");
-  }
+  // if (payload.password !== payload.confirmPassword) {
+  //   throw new ApiError(httpStatus.BAD_REQUEST, "Passwords do not match");
+  // }
 
   // Hash the password
   const hashedPassword = await bcrypt.hash(
@@ -45,7 +45,7 @@ const createAUserIntoDB = async (payload: Partial<TUser>) => {
   const userToSave: Partial<TUser> = {
     email: payload.email,
     password: hashedPassword,
-    confirmPassword: hashedPassword, // stored but select: false
+    // confirmPassword: hashedPassword, // stored but select: false
   };
 
   // Optional: allow adding other fields if available

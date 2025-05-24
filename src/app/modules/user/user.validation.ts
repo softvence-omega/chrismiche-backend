@@ -7,10 +7,10 @@ const createUserValidationSchema = z.object({
       .string({ required_error: "Password is required" })
       .min(6, "Password must be at least 6 characters")
       .max(20, "Password must be at most 20 characters"),
-    confirmPassword: z
-      .string({ required_error: "Confirm Password is required" })
-      .min(6, "Confirm Password must be at least 6 characters")
-      .max(20, "Confirm Password must be at most 20 characters"),
+    // confirmPassword: z
+    //   .string({ required_error: "Confirm Password is required" })
+    //   .min(6, "Confirm Password must be at least 6 characters")
+    //   .max(20, "Confirm Password must be at most 20 characters"),
     fullName: z.string().optional(), 
     username: z.string().optional(),
     gender: z.string().optional(),
