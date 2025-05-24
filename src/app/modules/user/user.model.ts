@@ -1,6 +1,7 @@
 import mongoose, { Schema, model } from "mongoose";
 import { TUser } from "./user.interface";
 import bcrypt from "bcrypt";
+import { CharacterList } from "../../config/characters";
 
 const userSchema = new Schema<TUser>(
   {
@@ -39,6 +40,8 @@ const userSchema = new Schema<TUser>(
     },
     character: {
       type: String,
+      enum: CharacterList,
+      default: "Robo",
     },
     role: {
       type: String,

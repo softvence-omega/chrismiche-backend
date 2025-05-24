@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CharacterList } from "../../config/characters";
 
 const createUserValidationSchema = z.object({
   body: z.object({
@@ -12,7 +13,7 @@ const createUserValidationSchema = z.object({
     gender: z.string().optional(),
     // image: z.string().optional(),
     phoneNumber: z.string().optional(),
-    character: z.string().optional(),
+    character: z.enum(CharacterList).default("Robo"),
 
     
     role: z.enum(["admin", "user"]).default("user"),

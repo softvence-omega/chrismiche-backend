@@ -1,5 +1,6 @@
 import {  Model } from "mongoose";
 import USER_ROLE from "../../constants/userRole";
+import { TCharacter } from "../../config/characters";
 
 export type TRegisterUserInput = Pick<TUser, "email" | "password">;
 
@@ -12,7 +13,7 @@ export interface TUser {
   // confirmPassword: string;
   // image: string;
   phoneNumber: string;
-  character: string;
+  character: TCharacter; // strictly typed
   role: "admin" | "user";
   passwordResetToken?: string | null
   passwordResetExpires?: Date | null
