@@ -1,7 +1,7 @@
 import {  Model } from "mongoose";
 import USER_ROLE from "../../constants/userRole";
 
-export type TRegisterUserInput = Pick<TUser, "email" | "password" | "confirmPassword">;
+export type TRegisterUserInput = Pick<TUser, "email" | "password">;
 
 export interface TUser {
   fullName: string
@@ -9,7 +9,7 @@ export interface TUser {
   username: string;
   gender: string
   password: string;
-  confirmPassword: string;
+  // confirmPassword: string;
   image: string;
   phoneNumber: string;
   character: string;

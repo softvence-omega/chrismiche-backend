@@ -25,11 +25,11 @@ const userSchema = new Schema<TUser>(
       required: [true, "Password is required"],
       select: false,
     },
-    confirmPassword: {
-      type: String,
-      required: [true, "Confirm Password is required"],
-      select: false,
-    },
+    // confirmPassword: {
+    //   type: String,
+    //   required: [true, "Confirm Password is required"],
+    //   select: false,
+    // },
     image: {
       type: String,
       default: "",
