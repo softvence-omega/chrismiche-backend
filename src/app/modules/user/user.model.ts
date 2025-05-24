@@ -30,10 +30,10 @@ const userSchema = new Schema<TUser>(
     //   required: [true, "Confirm Password is required"],
     //   select: false,
     // },
-    image: {
-      type: String,
-      default: "",
-    },
+    // image: {
+    //   type: String,
+    //   default: "",
+    // },
     phoneNumber: {
       type: String,
     },

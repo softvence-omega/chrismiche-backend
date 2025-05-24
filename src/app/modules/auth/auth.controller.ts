@@ -9,6 +9,7 @@ import crypto from "crypto"
 
 const loginUser = catchAsync(async (req, res) => {
   const result = await AuthServices.loginUser(req.body);
+  console.log(req.body)
   const { refreshToken, accessToken } = result;
 
   res.cookie("refreshToken", refreshToken, {
@@ -83,7 +84,7 @@ const resetPassword = catchAsync(async (req, res) => {
   }
 
   user.password = newPassword;
-  user.confirmPassword = confirmPassword;
+  // user.confirmPassword = confirmPassword;
 
   // Mark password as modified so pre-save hook runs and hashes it
   user.markModified("password");
@@ -97,7 +98,7 @@ const resetPassword = catchAsync(async (req, res) => {
     statusCode: httpStatus.OK,
     success: true,
     message: "Password reset successful",
-    data: null, // you can avoid sending back the user object for security
+    data: user, // you can avoid sending back the user object for security
   });
 });
 

@@ -35,16 +35,16 @@ const createAUserIntoDB = async (payload: Partial<TUser>) => {
   //   throw new ApiError(httpStatus.BAD_REQUEST, "Passwords do not match");
   // }
 
-  // Hash the password
-  const hashedPassword = await bcrypt.hash(
-    payload.password as string,
-    Number(config.bcrypt_salt_rounds)
-  );
+  // // Hash the password
+  // const hashedPassword = await bcrypt.hash(
+  //   payload.password as string,
+  //   Number(config.bcrypt_salt_rounds)
+  // );
 
   // Create user object for saving
   const userToSave: Partial<TUser> = {
     email: payload.email,
-    password: hashedPassword,
+    password: payload.password,
     // confirmPassword: hashedPassword, // stored but select: false
   };
 
@@ -52,7 +52,7 @@ const createAUserIntoDB = async (payload: Partial<TUser>) => {
   if (payload.fullName) userToSave.fullName = payload.fullName;
   if (payload.username) userToSave.username = payload.username;
   if (payload.gender) userToSave.gender = payload.gender;
-  if (payload.image) userToSave.image = payload.image;
+  // if (payload.image) userToSave.image = payload.image;
   if (payload.phoneNumber) userToSave.phoneNumber = payload.phoneNumber;
   if (payload.character) userToSave.character = payload.character;
 

@@ -24,13 +24,6 @@ const loginUser = async (payload: TLoginUser) => {
   if (isUserDeleted) {
     throw new ApiError(httpStatus.FORBIDDEN, "User is deleted!");
   }
-
-  // Check if user is blocked
-  // const userStatus = user?.status;
-  // if (userStatus === "blocked") {
-  //   throw new ApiError(httpStatus.FORBIDDEN, "User is blocked!");
-  // }
-
   // Check if password is correct
   if (!(await bcrypt.compare(payload?.password, user?.password))) {
     throw new ApiError(httpStatus.FORBIDDEN, "Password did not match!");

@@ -10,7 +10,7 @@ export interface TUser {
   gender: string
   password: string;
   // confirmPassword: string;
-  image: string;
+  // image: string;
   phoneNumber: string;
   character: string;
   role: "admin" | "user";
