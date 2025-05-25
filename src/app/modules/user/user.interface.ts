@@ -19,4 +19,4 @@ export interface TUser {
   isDeleted: boolean;
 }
 
-// export type TUserRole = keyof typeof USER_ROLE;
+export type TUserRole = keyof typeof USER_ROLE;

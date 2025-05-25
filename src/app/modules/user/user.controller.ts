@@ -36,29 +36,24 @@ const createAUser = catchAsync(async (req, res) => {
   });
 });
 
-export const updateUser = async (req: Request, res: Response) => {
-  try {
-    const userId = req.params.id;
-    const updatePayload = req.body;
+const updateUser = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.params.id;
+  const payload = req.body;
 
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { $set: updatePayload },
-      { new: true, runValidators: true }
-    ).select("-password");
+  const result = await UserServices.updateUserInDB(userId, payload);
 
-    if (!updatedUser) {
-      return res.status(404).json({ success: false, message: "User not found" });
-    }
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User updated successfully",
+    data: result,
+  });
+});
 
-    return res.status(200).json({ success: true, data: updatedUser });
-  } catch (error) {
-    return res.status(500).json({ success: false, message: "Internal server error" });
-  }
-};
 
 export const UserControllers = {
   getSingleUser,
   getAllUsers,
   createAUser,
+  updateUser,
 };

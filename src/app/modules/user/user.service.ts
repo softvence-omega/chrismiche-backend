@@ -24,45 +24,47 @@ const getSingleUserFromDB = async (id: string) => {
 };
 
 const createAUserIntoDB = async (payload: Partial<TUser>) => {
-  // Check if email already exists
   const existingUser = await User.findOne({ email: payload.email });
   if (existingUser) {
     throw new ApiError(httpStatus.CONFLICT, "User with this email already exists");
   }
 
-  // Validate passwords
-  // if (payload.password !== payload.confirmPassword) {
-  //   throw new ApiError(httpStatus.BAD_REQUEST, "Passwords do not match");
-  // }
-
-  // // Hash the password
-  // const hashedPassword = await bcrypt.hash(
-  //   payload.password as string,
-  //   Number(config.bcrypt_salt_rounds)
-  // );
-
-  // Create user object for saving
   const userToSave: Partial<TUser> = {
     email: payload.email,
     password: payload.password,
-    // confirmPassword: hashedPassword, // stored but select: false
+    fullName: payload.fullName ?? "",
+    username: payload.username ?? "",
+    gender: payload.gender ?? undefined,
+    phoneNumber: payload.phoneNumber ?? undefined,
+    character: payload.character ?? "Robo",
+    role: payload.role ?? "user",
   };
 
-  // Optional: allow adding other fields if available
-  if (payload.fullName) userToSave.fullName = payload.fullName;
-  if (payload.username) userToSave.username = payload.username;
-  if (payload.gender) userToSave.gender = payload.gender;
-  // if (payload.image) userToSave.image = payload.image;
-  if (payload.phoneNumber) userToSave.phoneNumber = payload.phoneNumber;
-  if (payload.character) userToSave.character = payload.character;
-
   const createdUser = await User.create(userToSave);
-  return createdUser;
+
+  // If password select is false, make sure to re-fetch with fields you want (optional)
+  const plainUser = await User.findById(createdUser._id).lean();
+
+  return plainUser;
 };
 
+const updateUserInDB = async (userId: string, payload: Partial<TUser>) => {
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { $set: payload },
+    { new: true, runValidators: true }
+  ).select("-password"); // don't return password
+
+  if (!updatedUser) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  return updatedUser;
+};
 
 export const UserServices = {
   getSingleUserFromDB,
   getAllUsersFromDB,
   createAUserIntoDB,
+  updateUserInDB,
 };

@@ -26,15 +26,6 @@ const userSchema = new Schema<TUser>(
       required: [true, "Password is required"],
       select: false,
     },
-    // confirmPassword: {
-    //   type: String,
-    //   required: [true, "Confirm Password is required"],
-    //   select: false,
-    // },
-    // image: {
-    //   type: String,
-    //   default: "",
-    // },
     phoneNumber: {
       type: String,
     },
@@ -58,7 +49,17 @@ const userSchema = new Schema<TUser>(
   },
   {
     timestamps: true,
-  }
+    toJSON: {
+      virtuals: true,
+      transform: (_doc, ret) => {
+        ret.id = ret._id; // Add `id` alias
+        // DO NOT delete _id
+        delete ret.__v;
+        delete ret.password;
+      },
+    }
+  },
+  
 );
 
 userSchema.pre(

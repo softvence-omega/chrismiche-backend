@@ -45,10 +45,10 @@ const auth = (...requiredRoles: TUserRole[]) => {
     }
 
     // Check if user is blocked
-    const userStatus = user?.status;
-    if (userStatus === "blocked") {
-      throw new ApiError(httpStatus.FORBIDDEN, "User is blocked!");
-    }
+    // const userStatus = user?.status;
+    // if (userStatus === "blocked") {
+    //   throw new ApiError(httpStatus.FORBIDDEN, "User is blocked!");
+    // }
 
     // Check if the request was sent by authorized user or not
     if (requiredRoles && !requiredRoles.includes(role)) {
@@ -58,7 +58,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
       );
     }
 
-    req.user = decoded as JwtPayload;
+    req.user = user;
     next();
   });
 };

@@ -1,5 +1,5 @@
 import express from "express";
-import { updateUser, UserControllers } from "./user.controller";
+import { UserControllers } from "./user.controller";
 import { validateRequest } from "../../middleWear/validateRequest";
 import { UserValidations } from "./user.validation";
 
@@ -15,7 +15,7 @@ router.post(
 router.patch(
   "/:id",
   validateRequest(UserValidations.updateUserValidationSchema),
-  updateUser
+  UserControllers.updateUser
 );
 
 export const UserRoutes = router;
