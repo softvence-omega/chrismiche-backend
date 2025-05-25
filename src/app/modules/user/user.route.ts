@@ -18,4 +18,4 @@ router.patch(
   UserControllers.updateUser
 );
 
-export const UserRoutes = router;
+export const UserRoutes = router; 
