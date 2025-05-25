@@ -1,5 +1,7 @@
+import { Types } from "mongoose";
+
 export type TMovement = {
-    user: string; // user _id
+    user: Types.ObjectId; // user _id
     meter: number;
     floorsClimbed: number;
     activityDate: Date; // date-time from client

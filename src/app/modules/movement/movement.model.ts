@@ -8,7 +8,7 @@ const movementSchema = new Schema<TMovement>(
       ref: "User",
       required: true,
     },
-    distance: {
+    meter: {
       type: Number,
       required: true,
     },
