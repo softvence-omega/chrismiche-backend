@@ -1,9 +1,11 @@
 import { Types } from "mongoose";
 
+export type TMovementType = "running" | "climbing";
+
 export type TMovement = {
-    user: Types.ObjectId; // user _id
-    meter: number;
-    floorsClimbed: number;
-    activityDate: Date; // date-time from client
-  };
-  
+  user: Types.ObjectId; // ✅ Allow ObjectId for compatibility with Mongoose schema
+  type: TMovementType;
+  meter?: number;
+  floorsClimbed?: number;
+  activityDate: Date;
+};
