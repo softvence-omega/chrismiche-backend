@@ -1,5 +1,5 @@
 import express from "express";
-import { UserControllers } from "./user.controller";
+import { updateUser, UserControllers } from "./user.controller";
 import { validateRequest } from "../../middleWear/validateRequest";
 import { UserValidations } from "./user.validation";
 
@@ -11,6 +11,11 @@ router.post(
   "/createUser",
   validateRequest(UserValidations.createUserValidationSchema),
   UserControllers.createAUser
+);
+router.patch(
+  "/:id",
+  validateRequest(UserValidations.updateUserValidationSchema),
+  updateUser
 );
 
 export const UserRoutes = router;
