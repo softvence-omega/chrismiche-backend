@@ -1,6 +1,5 @@
 import httpStatus from "http-status";
 import { catchAsync } from "../utils/catchAsync";
-import { JwtPayload } from "jsonwebtoken";
 import config from "../config";
 import { TUserRole } from "../modules/user/user.interface";
 import { User } from "../modules/user/user.model";
@@ -8,7 +7,7 @@ import ApiError from "../errors/ApiError";
 import { verifyToken } from "../modules/auth/auth.utils";
 
 const auth = (...requiredRoles: TUserRole[]) => {
-  return catchAsync(async (req, res, next) => {
+  return catchAsync(async (req, _res, next) => {
     const token = req.headers.authorization;
 
     //Check if token is sent
@@ -30,7 +29,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
       );
     }
     console.log(decoded);
-    const { userId, role, iat } = decoded;
+    const { userId, role } = decoded;
     const user = await User.findById(userId);
 
     // Check if user exists

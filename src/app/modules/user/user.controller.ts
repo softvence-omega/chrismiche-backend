@@ -3,9 +3,8 @@ import { UserServices } from "./user.service";
 import { catchAsync } from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
-import { User } from "./user.model";
 
-const getAllUsers = catchAsync(async (req, res) => {
+const getAllUsers = catchAsync(async (_req, res) => {
   const result = await UserServices.getAllUsersFromDB();
   sendResponse(res, {
     statusCode: httpStatus.OK,

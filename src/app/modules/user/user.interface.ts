@@ -1,4 +1,3 @@
-import { Model } from "mongoose";
 import USER_ROLE from "../../constants/userRole";
 import { TCharacter } from "../../config/characters";
 

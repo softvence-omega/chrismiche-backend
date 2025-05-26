@@ -1,8 +1,6 @@
-import config from "../../config";
 import ApiError from "../../errors/ApiError";
-import { TRegisterUserInput, TUser } from "./user.interface";
+import { TUser } from "./user.interface";
 import { User } from "./user.model";
-import bcrypt from "bcrypt";
 import httpStatus from "http-status";
 
 const getAllUsersFromDB = async () => {

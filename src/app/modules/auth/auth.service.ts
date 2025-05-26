@@ -103,7 +103,7 @@ const refreshToken = async (token: string) => {
   // checking if the given token is valid
   const decoded = verifyToken(token, config.jwt_refresh_secret as string);
 
-  const { userId, iat } = decoded;
+  const { userId } = decoded;
 
   // checking if the user exists
   const user = await User.findById(userId);
