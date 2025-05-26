@@ -1,10 +1,11 @@
 {
   "name": "harmoniai-backend",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "dist/server.js",
   "scripts": {
     "build": "tsc",
     "start": "node ./dist/server.js",
+    "prestart": "npm run build",
     "start:dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
