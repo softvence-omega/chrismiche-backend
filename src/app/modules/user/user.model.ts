@@ -34,6 +34,8 @@ const userSchema = new Schema<TUser>(
       enum: CharacterList,
       default: "Robo",
     },
+    ongoingMovements: [{ type: Schema.Types.ObjectId, ref: "Movement" }],
+    onClimbingMovements: [{ type: Schema.Types.ObjectId, ref: "Movement" }],
     role: {
       type: String,
       required: true,
@@ -57,15 +59,14 @@ const userSchema = new Schema<TUser>(
         delete ret.__v;
         delete ret.password;
       },
-    }
-  },
-  
+    },
+  }
 );
 
 userSchema.pre(
   "save",
   async function (next: (err?: mongoose.CallbackError) => void) {
-    const user = this as any; 
+    const user = this as any;
 
     if (!user.isModified("password")) {
       return next();
