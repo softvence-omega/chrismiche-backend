@@ -1,29 +1,20 @@
-import { Movement } from "./movement.model";
-import { TMovement } from "./movement.interface";
-import { FilterQuery } from "mongoose";
+import climbingMovementModel from "./climbingMovement.model";
+import { MovementInput } from "./movement.interface";
+import ongoingMovementModel from "./ongoingMovement.model";
 
-export const createMovement = async (payload: TMovement) => {
-  return await Movement.create(payload);
+
+export const saveOngoingMovement = async (data: MovementInput) => {
+  return await ongoingMovementModel.findOneAndUpdate(
+    { userId: data.userId, date: data.date },
+    { distance: data.distance },
+    { upsert: true, new: true }
+  );
 };
 
-export const getUserMovements = async (
-  userId: string,
-  startDate?: string,
-  endDate?: string
-) => {
-  const query: FilterQuery<TMovement> = {
-    user: userId,
-  };
-
-  if (startDate || endDate) {
-    query.activityDate = {};
-    if (startDate) {
-      query.activityDate.$gte = new Date(startDate);
-    }
-    if (endDate) {
-      query.activityDate.$lte = new Date(endDate);
-    }
-  }
-
-  return await Movement.find(query).sort({ activityDate: -1 });
+export const saveClimbingMovement = async (data: MovementInput) => {
+  return await climbingMovementModel.findOneAndUpdate(
+    { userId: data.userId, date: data.date },
+    { distance: data.distance },
+    { upsert: true, new: true }
+  );
 };

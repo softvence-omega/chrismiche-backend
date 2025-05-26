@@ -1,34 +1,32 @@
 import { Request, Response } from "express";
-import { catchAsync } from "../../utils/catchAsync";
-import httpStatus from "http-status";
-import * as movementService from "./movement.service";
+import { saveClimbingMovement, saveOngoingMovement } from "./movement.service";
 
-export const createMovement = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user?.userId;
-  const payload = { ...req.body, user: userId };
+export const postOngoingMovement = async (req: Request, res: Response) => {
+  try {
+    const { userId, date, distance } = req.body;
 
-  const result = await movementService.createMovement(payload);
+    if (!userId || !date || typeof distance !== "number") {
+      return res.status(400).json({ message: "Invalid input." });
+    }
 
-  res.status(httpStatus.CREATED).json({
-    success: true,
-    message: "Movement data created successfully",
-    data: result,
-  });
-});
+    const data = await saveOngoingMovement({ userId, date, distance });
+    return res.status(200).json({ message: "Ongoing movement saved", data });
+  } catch (err) {
+    return res.status(500).json({ message: "Server error", error: err });
+  }
+};
 
-export const getMyMovements = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user?.userId;
-  const { startDate, endDate } = req.query;
+export const postClimbingMovement = async (req: Request, res: Response) => {
+  try {
+    const { userId, date, distance } = req.body;
 
-  const result = await movementService.getUserMovements(
-    userId,
-    startDate as string,
-    endDate as string
-  );
+    if (!userId || !date || typeof distance !== "number") {
+      return res.status(400).json({ message: "Invalid input." });
+    }
 
-  res.status(httpStatus.OK).json({
-    success: true,
-    message: "User movement data fetched successfully",
-    data: result,
-  });
-});
+    const data = await saveClimbingMovement({ userId, date, distance });
+    return res.status(200).json({ message: "Climbing movement saved", data });
+  } catch (err) {
+    return res.status(500).json({ message: "Server error", error: err });
+  }
+};

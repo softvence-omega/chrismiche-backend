@@ -1,11 +1,10 @@
-import express from "express";
+import { Router } from "express";
+import { postClimbingMovement, postOngoingMovement } from "./movement.controller";
 
-import { createMovement, getMyMovements } from "./movement.controller";
-import auth from "../../middleWear/auth";
 
-const router = express.Router();
+const router = Router();
 
-router.post("/", auth("user"), createMovement);
-router.get("/me", auth("user"), getMyMovements);
+router.post("/ongoing", postOngoingMovement);
+router.post("/on-climbing", postClimbingMovement);
 
-export const MovementRoutes = router;
+export default router;
