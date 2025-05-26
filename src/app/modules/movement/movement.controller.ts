@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
 import { saveClimbingMovement, saveOngoingMovement } from "./movement.service";
 
+
 export const postOngoingMovement = async (req: Request, res: Response) => {
   try {
-    const { userId, date, distance } = req.body;
+    const { date, distance } = req.body;
+    const userId = (req as any).user?._id;
 
     if (!userId || !date || typeof distance !== "number") {
       return res.status(400).json({ message: "Invalid input." });
@@ -18,7 +20,8 @@ export const postOngoingMovement = async (req: Request, res: Response) => {
 
 export const postClimbingMovement = async (req: Request, res: Response) => {
   try {
-    const { userId, date, distance } = req.body;
+    const { date, distance } = req.body;
+    const userId = (req as any).user?._id;
 
     if (!userId || !date || typeof distance !== "number") {
       return res.status(400).json({ message: "Invalid input." });
