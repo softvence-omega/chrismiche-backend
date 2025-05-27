@@ -1,7 +1,7 @@
 
 import { Router } from "express";
 import { postClimbingMovement, postOngoingMovement } from "./movement.controller";
-import auth from "@/app/middleWear/auth";
+import auth from "../../middleWear/auth";
 
 
 const router = Router();

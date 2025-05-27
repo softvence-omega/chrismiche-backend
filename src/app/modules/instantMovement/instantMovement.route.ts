@@ -1,6 +1,6 @@
 import express from "express";
 import { postTrackingClimb, postTrackingRun } from "./instantMovement.controller";
-import auth from "@/app/middleWear/auth";
+import auth from "../../middleWear/auth";
 
 const router = express.Router();
 
