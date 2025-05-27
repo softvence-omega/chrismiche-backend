@@ -2,6 +2,7 @@ import express from "express";
 import { UserControllers } from "./user.controller";
 import { validateRequest } from "../../middleWear/validateRequest";
 import { UserValidations } from "./user.validation";
+import auth from "@/app/middleWear/auth";
 
 const router = express.Router();
 
@@ -13,7 +14,8 @@ router.post(
   UserControllers.createAUser
 );
 router.patch(
-  "/:id",
+  "/",
+  auth('user'),
   validateRequest(UserValidations.updateUserValidationSchema),
   UserControllers.updateUser
 );
