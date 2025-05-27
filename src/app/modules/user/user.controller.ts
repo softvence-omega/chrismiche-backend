@@ -3,7 +3,7 @@ import { UserServices } from "./user.service";
 import { catchAsync } from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
-import ApiError from "@/app/errors/ApiError";
+import ApiError from "../../errors/ApiError";
 import { createToken } from "../auth/auth.utils";
 import config from "../../config";
 
