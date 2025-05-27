@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
 import { saveClimbingMovement, saveOngoingMovement } from "./movement.service";
+import ongoingMovementModel from "./ongoingMovement.model";
+import climbingMovementModel from "./climbingMovement.model";
+import { InstantMovement } from "../instantMovement/instantMovement.model";
 
 
 export const postOngoingMovement = async (req: Request, res: Response) => {
@@ -31,5 +34,36 @@ export const postClimbingMovement = async (req: Request, res: Response) => {
     return res.status(200).json({ message: "Climbing movement saved", data });
   } catch (err) {
     return res.status(500).json({ message: "Server error", error: err });
+  }
+};
+
+
+
+export const getAllMovements = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user?._id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const [ongoingMovements, climbingMovements, instantMovements] = await Promise.all([
+      ongoingMovementModel.find({ userId }),
+      climbingMovementModel.find({ userId }),
+      InstantMovement.find({ userId }),
+    ]);
+
+    const trackingRunningMovements = instantMovements.filter(m => m.type === "run");
+    const trackingClimbs = instantMovements.filter(m => m.type === "climb");
+
+    return res.status(200).json({
+      ongoingMovements,
+      climbingMovements,
+      trackingRunningMovements,
+      trackingClimbs,
+    });
+  } catch (error) {
+    console.error("Error fetching movement data:", error);
+    return res.status(500).json({ message: "Failed to fetch movement data" });
   }
 };
