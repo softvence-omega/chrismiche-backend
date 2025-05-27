@@ -34,8 +34,8 @@ const userSchema = new Schema<TUser>(
       enum: CharacterList,
       default: "Robo",
     },
-    ongoingMovements: [{ type: Schema.Types.ObjectId, ref: "Movement" }],
-    onClimbingMovements: [{ type: Schema.Types.ObjectId, ref: "Movement" }],
+    ongoingMovements: [{ type: Schema.Types.ObjectId, ref: "OngoingMovement" }],
+    onClimbingMovements: [{ type: Schema.Types.ObjectId, ref: "ClimbingMovement" }],
     role: {
       type: String,
       required: true,

@@ -14,10 +14,15 @@ const getSingleUserFromDB = async (id: string) => {
     isDeleted: false,
     status: { $ne: "blocked" },
   });
-  if (!deletedOrBlockedUser)
-    throw new ApiError(httpStatus.FORBIDDEN, "Failed to Fetch user");
 
-  const result = await User.findById(id);
+  if (!deletedOrBlockedUser) {
+    throw new ApiError(httpStatus.FORBIDDEN, "Failed to fetch user");
+  }
+
+  const result = await User.findById(id)
+    .populate("onClimbingMovements") // populating climbing movement references
+    .populate("ongoingMovements");   // populating ongoing movement references
+
   return result;
 };
 
