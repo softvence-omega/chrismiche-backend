@@ -47,10 +47,17 @@ export const getAllMovements = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
+    const { date } = req.query;
+
+    const filter = {
+      userId,
+      ...(date ? { date: date as string } : {}),
+    };
+
     const [ongoingMovements, climbingMovements, instantMovements] = await Promise.all([
-      ongoingMovementModel.find({ userId }),
-      climbingMovementModel.find({ userId }),
-      InstantMovement.find({ userId }),
+      ongoingMovementModel.find(filter),
+      climbingMovementModel.find(filter),
+      InstantMovement.find(filter),
     ]);
 
     const trackingRunningMovements = instantMovements.filter(m => m.type === "run");
