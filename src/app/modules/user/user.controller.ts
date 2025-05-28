@@ -18,8 +18,13 @@ const getAllUsers = catchAsync(async (_req, res) => {
 });
 
 const getSingleUser = catchAsync(async (req, res) => {
-  const { id } = req.params;
-  const result = await UserServices.getSingleUserFromDB(id);
+  const userId = req.user?._id; // `req.user` comes from auth middleware
+
+  if (!userId) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, "Unauthorized access");
+  }
+
+  const result = await UserServices.getSingleUserFromDB(userId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

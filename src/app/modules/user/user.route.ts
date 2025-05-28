@@ -6,7 +6,7 @@ import auth from "../../middleWear/auth";
 
 const router = express.Router();
 
-router.get("/:id", UserControllers.getSingleUser);
+router.get("/", auth("user"), UserControllers.getSingleUser);
 router.get("/", UserControllers.getAllUsers);
 router.post(
   "/createUser",
