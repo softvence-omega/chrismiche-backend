@@ -31,7 +31,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
       );
     }
 
-    console.log("Decoded token:", decoded);
+    // console.log("Decoded token:", decoded);
     const { userId, role } = decoded;
 
     const user = await User.findById(userId);

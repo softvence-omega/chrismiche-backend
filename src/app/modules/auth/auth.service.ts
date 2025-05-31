@@ -12,7 +12,7 @@ const loginUser = async (payload: TLoginUser) => {
   const user = await User.findOne({ email: payload?.email }).select(
     "+password"
   );
-  console.log(user, payload);
+  // console.log(user, payload);
 
   // Check if user exists
   if (!user) {

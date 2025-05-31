@@ -9,7 +9,7 @@ import crypto from "crypto"
 
 const loginUser = catchAsync(async (req, res) => {
   const result = await AuthServices.loginUser(req.body);
-  console.log(req.body)
+  // console.log(req.body)
   const { refreshToken, accessToken } = result;
 
   res.cookie("refreshToken", refreshToken, {
@@ -38,7 +38,7 @@ const changePassword = catchAsync(async (req, res) => {
 
 const refreshToken = catchAsync(async (req, res) => {
   const { refreshToken } = req.cookies;
-  console.log(refreshToken);
+  // console.log(refreshToken);
   const result = await AuthServices.refreshToken(refreshToken);
   sendResponse(res, {
     statusCode: httpStatus.OK,
