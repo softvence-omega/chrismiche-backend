@@ -6,7 +6,7 @@ import config from "../../config";
 import bcrypt from "bcrypt";
 import { createToken, verifyToken } from "./auth.utils";
 import { User } from "../user/user.model";
-import { sendEmail } from "@/app/utils/sendEmail";
+import { sendEmail } from "../../utils/sendEmail";
 
 
 const loginUser = async (payload: TLoginUser) => {
