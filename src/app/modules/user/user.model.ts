@@ -35,7 +35,9 @@ const userSchema = new Schema<TUser>(
       default: "Robo",
     },
     ongoingMovements: [{ type: Schema.Types.ObjectId, ref: "OngoingMovement" }],
-    onClimbingMovements: [{ type: Schema.Types.ObjectId, ref: "ClimbingMovement" }],
+    onClimbingMovements: [
+      { type: Schema.Types.ObjectId, ref: "ClimbingMovement" },
+    ],
     role: {
       type: String,
       required: true,
@@ -46,8 +48,12 @@ const userSchema = new Schema<TUser>(
       type: Boolean,
       default: false,
     },
-    passwordResetToken: { type: String, default: null },
-    passwordResetExpires: { type: Date, default: null },
+    // passwordResetToken: { type: String, default: null },
+    // passwordResetExpires: { type: Date, default: null },
+    passwordResetOTP: { type: String, select: false },
+passwordResetExpires: {Date},
+    otp: { type: String },
+    otpExpires: { type: Date },
   },
   {
     timestamps: true,

@@ -27,13 +27,16 @@ router.post(
 );
 
 router.post(
-  "/forget-password",
-  validateRequest(AuthValidation.forgetPasswordValidationSchema),
-  AuthControllers.forgetPassword
+  "/forgot-password/send-otp",
+  // validateRequest(AuthValidation.forgotPasswordValidationSchema),
+  AuthControllers.sendForgotPasswordOTP
 );
+
 router.post(
-  "/reset-password/:token",
-  validateRequest(AuthValidation.resetPasswordValidationSchema),
-  AuthControllers.resetPassword
+  "/reset-password/verify-otp",
+  // validateRequest(AuthValidation.verifyOTPValidationSchema),
+  AuthControllers.verifyForgotPasswordOTP
 );
+
+
 export const AuthRoutes = router;

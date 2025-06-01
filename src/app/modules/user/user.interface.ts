@@ -12,12 +12,14 @@ export interface TUser {
   password: string;
   phoneNumber: string;
   character: TCharacter; // strictly typed
-  ongoingMovements?: Types.ObjectId[];     // Array of ObjectIds referencing Movement documents
+  ongoingMovements?: Types.ObjectId[]; // Array of ObjectIds referencing Movement documents
   onClimbingMovements?: Types.ObjectId[];
   role: "admin" | "user";
   passwordResetToken?: string | null;
   passwordResetExpires?: Date | null;
-
+  passwordResetOTP?: string
+  otp: String;
+  otpExpires: Date;
   isDeleted: boolean;
 }
 

@@ -5,8 +5,9 @@ import { JwtPayload } from "jsonwebtoken";
 import config from "../../config";
 import bcrypt from "bcrypt";
 import { createToken, verifyToken } from "./auth.utils";
-import crypto from 'crypto';
 import { User } from "../user/user.model";
+import { sendEmail } from "@/app/utils/sendEmail";
+
 
 const loginUser = async (payload: TLoginUser) => {
   const user = await User.findOne({ email: payload?.email }).select(
@@ -138,42 +139,65 @@ const refreshToken = async (token: string) => {
   };
 };
 
-const forgetPassword = async (email: string) => {
+
+const sendForgotPasswordOTP = async (email: string) => {
   const user = await User.findOne({ email });
-  if (!user) throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
 
-  const resetToken = crypto.randomBytes(32).toString('hex');
-  const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const expires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-  user.passwordResetToken = hashedToken;
-  user.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000);  // 10 mins
-  await user.save({ validateBeforeSave: false });
+  user.passwordResetOTP = otp;
+  user.passwordResetExpires = expires;
+  await user.save();
 
-  return { resetToken }; // this will be returned to Flutter app
-};
-
-const resetPassword = async ({ resetToken, password }: { resetToken: string; password: string }) => {
-  const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-
-  const user = await User.findOne({
-    passwordResetToken: hashedToken,
-    passwordResetExpires: { $gt: new Date() },
+  await sendEmail({
+    to: user.email,
+    subject: "Your OTP for Password Reset",
+    text: `Your OTP is ${otp}. It is valid for 10 minutes.`,
   });
 
-  if (!user) throw new ApiError(httpStatus.BAD_REQUEST, 'Token is invalid or expired');
+  return null;
+};
 
-  user.password = await bcrypt.hash(password, Number(config.bcrypt_salt_rounds));
-  user.passwordResetToken = undefined;
+const verifyForgotPasswordOTP = async (payload: {
+  email: string;
+  otp: string;
+  newPassword: string;
+}) => {
+  const { email, otp, newPassword } = payload;
+  const user = await User.findOne({ email }).select("+passwordResetOTP passwordResetExpires");
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  if (
+    user.passwordResetOTP !== otp ||
+    !user.passwordResetExpires ||
+    user.passwordResetExpires < new Date()
+  ) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid or expired OTP");
+  }
+
+  user.password = newPassword; 
+  console.log("new pass", user?.password)
+  user.passwordResetOTP = undefined;
   user.passwordResetExpires = undefined;
   await user.save();
 
-  return { email: user.email };
+  return null;
 };
+
+
+
+
 
 export const AuthServices = {
   loginUser,
   changePassword,
   refreshToken,
-  forgetPassword,
-  resetPassword,
+  verifyForgotPasswordOTP,
+  sendForgotPasswordOTP
 };
