@@ -13,6 +13,10 @@ router.post(
   AuthControllers.loginUser
 );
 
+
+router.post("/social-login", AuthControllers.socialLogin);
+// router.post("/firebase-login", AuthControllers.firebaseLogin);
+
 router.post(
   "/change-password",
   auth(USER_ROLE.user, USER_ROLE.admin),

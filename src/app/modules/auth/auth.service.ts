@@ -7,6 +7,11 @@ import bcrypt from "bcrypt";
 import { createToken, verifyToken } from "./auth.utils";
 import { User } from "../user/user.model";
 import { sendEmail } from "../../utils/sendEmail";
+// import admin from "../../../firebase-service-account.json";
+import jwt from "jsonwebtoken";
+import admin from "firebase-admin";
+
+import { TUser } from "../user/user.interface";
 
 
 const loginUser = async (payload: TLoginUser) => {
@@ -191,13 +196,65 @@ const verifyForgotPasswordOTP = async (payload: {
 };
 
 
+const socialLogin = async ({ provider, idToken }: { provider: string; idToken: string }) => {
+  let decodedToken;
+  try {
+    decodedToken = await admin.auth().verifyIdToken(idToken);
+  } catch (error) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, "Invalid ID token");
+  }
 
+  const { email, name, picture, uid } = decodedToken;
 
+  if (!email) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Email is required from provider");
+  }
+
+  let user = await User.findOne({ email });
+
+  if (!user) {
+    user = await User.create({
+      email,
+      name,
+      photoUrl: picture,
+      provider,           // Save provider (google/facebook)
+      firebaseUid: uid,
+      password: Math.random().toString(36).slice(-8),
+    });
+  }
+
+  if (user.isDeleted) {
+    throw new ApiError(httpStatus.FORBIDDEN, "User is deleted!");
+  }
+
+  const jwtPayload = {
+    userId: user._id.toString(),
+    role: user.role,
+  };
+
+  const accessToken = createToken(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    parseInt(config.jwt_access_expires_in as string)
+  );
+
+  const refreshToken = createToken(
+    jwtPayload,
+    config.jwt_refresh_secret as string,
+    parseInt(config.jwt_refresh_expires_in as string)
+  );
+
+  return {
+    accessToken,
+    refreshToken,
+  };
+};
 
 export const AuthServices = {
   loginUser,
   changePassword,
   refreshToken,
   verifyForgotPasswordOTP,
-  sendForgotPasswordOTP
+  sendForgotPasswordOTP,
+  socialLogin
 };

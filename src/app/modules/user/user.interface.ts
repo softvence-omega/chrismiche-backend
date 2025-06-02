@@ -1,3 +1,4 @@
+// src/interfaces/user.interface.ts
 import USER_ROLE from "../../constants/userRole";
 import { TCharacter } from "../../config/characters";
 import { Types } from "mongoose";
@@ -5,22 +6,26 @@ import { Types } from "mongoose";
 export type TRegisterUserInput = Pick<TUser, "email" | "password">;
 
 export interface TUser {
+  _id: string;
   fullName: string;
   email: string;
-  username: string;
-  gender: string;
-  password: string;
-  phoneNumber: string;
-  character: TCharacter; // strictly typed
-  ongoingMovements?: Types.ObjectId[]; // Array of ObjectIds referencing Movement documents
+  username?: string;
+  gender?: string;
+  password: string; // Optional for social users
+  phoneNumber?: string;
+  character?: TCharacter;
+  ongoingMovements?: Types.ObjectId[];
   onClimbingMovements?: Types.ObjectId[];
   role: "admin" | "user";
   passwordResetToken?: string | null;
   passwordResetExpires?: Date | null;
-  passwordResetOTP?: string
-  otp: String;
-  otpExpires: Date;
+  passwordResetOTP?: string;
+  otp?: string;
+  otpExpires?: Date;
   isDeleted: boolean;
-}
 
-export type TUserRole = keyof typeof USER_ROLE;
+  // New fields for social login
+  provider?: "google" | "facebook" | "credentials";
+  firebaseUID?: string;
+  avatar?: string;
+}

@@ -3,6 +3,7 @@ import { catchAsync } from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { AuthServices } from "./auth.service";
 import config from "../../config";
+import ApiError from "@/app/errors/ApiError";
 
 
 const loginUser = catchAsync(async (req, res) => {
@@ -66,6 +67,32 @@ const verifyForgotPasswordOTP = catchAsync(async (req, res) => {
   });
 });
 
+const socialLogin = catchAsync(async (req, res) => {
+  const { provider, idToken } = req.body;
+
+  if (!provider || !idToken) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Provider and ID token are required");
+  }
+
+  const result = await AuthServices.socialLogin({ provider, idToken });
+
+  const { accessToken, refreshToken } = result;
+
+  res.cookie("refreshToken", refreshToken, {
+    secure: config.node_env === "production",
+    httpOnly: true,
+    sameSite: "none",
+    maxAge: 1000 * 60 * 60 * 24 * 365,
+  });
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Social login successful",
+    data: { accessToken },
+  });
+});
+
 
 
 export const AuthControllers = {
@@ -73,5 +100,6 @@ export const AuthControllers = {
   changePassword,
   refreshToken,
   sendForgotPasswordOTP,
-  verifyForgotPasswordOTP
+  verifyForgotPasswordOTP,
+  socialLogin
 };
