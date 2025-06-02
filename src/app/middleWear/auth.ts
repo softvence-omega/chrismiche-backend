@@ -1,10 +1,11 @@
 import httpStatus from "http-status";
 import { catchAsync } from "../utils/catchAsync";
 import config from "../config";
-import { TUserRole } from "../modules/user/user.interface";
+// import { TUserRole } from "../modules/user/user.interface";
 import { User } from "../modules/user/user.model";
 import ApiError from "../errors/ApiError";
 import { verifyToken } from "../modules/auth/auth.utils";
+import { TUserRole } from "../modules/user/user.interface";
 
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req, _res, next) => {
