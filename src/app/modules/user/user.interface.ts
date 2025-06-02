@@ -1,5 +1,5 @@
 // src/interfaces/user.interface.ts
-import USER_ROLE from "../../constants/userRole";
+import USER_ROLE from "@/app/constants/userRole";
 import { TCharacter } from "../../config/characters";
 import { Types } from "mongoose";
 
@@ -29,3 +29,6 @@ export interface TUser {
   firebaseUID?: string;
   avatar?: string;
 }
+
+
+export type TUserRole = keyof typeof USER_ROLE;
