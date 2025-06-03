@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "dist/server.js",
   "scripts": {
-    "build": "tsc",
+    "build": "NODE_OPTIONS='--max-old-space-size=2048' tsc",
     "start": "node ./dist/server.js",
     "prestart": "npm run build",
     "start:dev": "ts-node-dev --respawn --transpile-only --require tsconfig-paths/register src/server.ts",
