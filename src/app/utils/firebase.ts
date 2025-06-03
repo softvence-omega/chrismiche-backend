@@ -1,9 +1,21 @@
+// // src/firebase.ts
+// import admin from "firebase-admin";
+// import serviceAccount from "../../firebase-service-account.json";
+
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+// });
+
+// export default admin;
+
+
 // src/firebase.ts
-import admin from "firebase-admin";
-import serviceAccount from "../../firebase-service-account.json";
+import admin from 'firebase-admin';
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-});
+const serviceAccount = JSON.parse(process.env.FIREBASE_CONFIG as string);
 
-export default admin;
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  });
+}
