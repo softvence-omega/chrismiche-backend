@@ -3,7 +3,7 @@ import { catchAsync } from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { AuthServices } from "./auth.service";
 import config from "../../config";
-import ApiError from "@/app/errors/ApiError";
+import ApiError from "../../errors/ApiError";
 
 
 const loginUser = catchAsync(async (req, res) => {
