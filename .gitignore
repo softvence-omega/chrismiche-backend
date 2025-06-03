@@ -1,4 +1,3 @@
 dist
 node_modules
 .envsrc/firebase-service-account.json
-firebase-service-account.json

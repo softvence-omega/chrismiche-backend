@@ -8,10 +8,7 @@ import { createToken, verifyToken } from "./auth.utils";
 import { User } from "../user/user.model";
 import { sendEmail } from "../../utils/sendEmail";
 // import admin from "../../../firebase-service-account.json";
-import jwt from "jsonwebtoken";
 import admin from "firebase-admin";
-
-import { TUser } from "../user/user.interface";
 
 
 const loginUser = async (payload: TLoginUser) => {
