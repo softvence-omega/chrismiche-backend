@@ -19,6 +19,7 @@ export interface TUser {
   role: "admin" | "user";
   passwordResetToken?: string | null;
   passwordResetExpires?: Date | null;
+  passwordResetVerified: boolean
   passwordResetOTP?: string;
   otp?: string;
   otpExpires?: Date;

@@ -41,6 +41,7 @@ const userSchema = new Schema<TUser>(
 
     passwordResetOTP: { type: String, select: false },
     passwordResetExpires: { type: Date },
+    passwordResetVerified: { type: Boolean, default: false, select: false },
     otp: { type: String },
     otpExpires: { type: Date },
 

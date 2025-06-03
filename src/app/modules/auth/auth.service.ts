@@ -143,6 +143,7 @@ const refreshToken = async (token: string) => {
 };
 
 
+// 1. Send OTP to Email
 const sendForgotPasswordOTP = async (email: string) => {
   const user = await User.findOne({ email });
   if (!user) {
@@ -150,10 +151,11 @@ const sendForgotPasswordOTP = async (email: string) => {
   }
 
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  const expires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+  const expires = new Date(Date.now() + 10 * 60 * 1000); // valid for 10 minutes
 
   user.passwordResetOTP = otp;
   user.passwordResetExpires = expires;
+  user.passwordResetVerified = false;
   await user.save();
 
   await sendEmail({
@@ -165,13 +167,14 @@ const sendForgotPasswordOTP = async (email: string) => {
   return null;
 };
 
-const verifyForgotPasswordOTP = async (payload: {
-  email: string;
-  otp: string;
-  newPassword: string;
-}) => {
-  const { email, otp, newPassword } = payload;
-  const user = await User.findOne({ email }).select("+passwordResetOTP passwordResetExpires");
+// 2. Verify Only OTP (no new password at this step)
+const verifyOnlyOTP = async (payload: { email: string; otp: string }) => {
+  const { email, otp } = payload;
+
+  const user = await User.findOne({ email }).select(
+    "+passwordResetOTP +passwordResetExpires +passwordResetVerified"
+  );
+
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, "User not found");
   }
@@ -184,15 +187,33 @@ const verifyForgotPasswordOTP = async (payload: {
     throw new ApiError(httpStatus.BAD_REQUEST, "Invalid or expired OTP");
   }
 
-  user.password = newPassword; 
-  console.log("new pass", user?.password)
+  user.passwordResetVerified = true;
+  await user.save();
+
+  return { verified: true };
+};
+
+const resetPasswordAfterOTP = async (payload: { newPassword: string }) => {
+  const { newPassword } = payload;
+
+  const user = await User.findOne({
+    passwordResetVerified: true,
+    passwordResetExpires: { $gt: new Date() },
+  }).select("+email +passwordResetVerified");
+
+  if (!user) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "OTP not verified or expired");
+  }
+
+  user.password = newPassword;
   user.passwordResetOTP = undefined;
   user.passwordResetExpires = undefined;
+  user.passwordResetVerified = false;
+
   await user.save();
 
   return null;
 };
-
 
 const socialLogin = async ({ provider, idToken }: { provider: string; idToken: string }) => {
   let decodedToken;
@@ -252,7 +273,8 @@ export const AuthServices = {
   loginUser,
   changePassword,
   refreshToken,
-  verifyForgotPasswordOTP,
+  resetPasswordAfterOTP,
   sendForgotPasswordOTP,
+  verifyOnlyOTP,
   socialLogin
 };

@@ -48,22 +48,33 @@ const refreshToken = catchAsync(async (req, res) => {
 });
 
 const sendForgotPasswordOTP = catchAsync(async (req, res) => {
-  const result = await AuthServices.sendForgotPasswordOTP(req.body.email);
+  await AuthServices.sendForgotPasswordOTP(req.body.email);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "OTP has been sent to your email",
+    message: "6 digit OTP has been sent to your email",
+    data: "OTP will be valid for only 10 minutes"
+  });
+});
+
+const verifyOnlyOTP = catchAsync(async (req, res) => {
+  const result = await AuthServices.verifyOnlyOTP(req.body);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "OTP verified successfully",
     data: result,
   });
 });
 
-const verifyForgotPasswordOTP = catchAsync(async (req, res) => {
-  const result = await AuthServices.verifyForgotPasswordOTP(req.body);
+const resetPassword = catchAsync(async (req, res) => {
+  await AuthServices.resetPasswordAfterOTP(req.body); // body: { newPassword: '...' }
+
   sendResponse(res, {
-    statusCode: httpStatus.OK,
     success: true,
-    message: "Password reset successfully",
-    data: result,
+    message: "Password reset successful",
+    statusCode: httpStatus.OK,
+    data: null,
   });
 });
 
@@ -100,6 +111,7 @@ export const AuthControllers = {
   changePassword,
   refreshToken,
   sendForgotPasswordOTP,
-  verifyForgotPasswordOTP,
+  resetPassword,
+  verifyOnlyOTP,
   socialLogin
 };

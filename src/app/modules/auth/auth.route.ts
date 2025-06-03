@@ -30,17 +30,9 @@ router.post(
   AuthControllers.refreshToken
 );
 
-router.post(
-  "/forgot-password/send-otp",
-  // validateRequest(AuthValidation.forgotPasswordValidationSchema),
-  AuthControllers.sendForgotPasswordOTP
-);
-
-router.post(
-  "/reset-password/verify-otp",
-  // validateRequest(AuthValidation.verifyOTPValidationSchema),
-  AuthControllers.verifyForgotPasswordOTP
-);
+router.post("/forgot-password/send-otp", AuthControllers.sendForgotPasswordOTP);
+router.post("/forgot-password/verify-otp", AuthControllers.verifyOnlyOTP);
+router.post("/reset-password", AuthControllers.resetPassword);
 
 
 export const AuthRoutes = router;
