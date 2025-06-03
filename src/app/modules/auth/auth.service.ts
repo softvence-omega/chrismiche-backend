@@ -7,7 +7,7 @@ import bcrypt from "bcrypt";
 import { createToken, verifyToken } from "./auth.utils";
 import { User } from "../user/user.model";
 import { sendEmail } from "../../utils/sendEmail";
-import admin from "@/app/utils/firebase.init";
+import admin from "../../utils/firebase.init";
 // import admin from "../../../firebase-service-account.json";
 // import admin from "firebase-admin";
 
