@@ -11,18 +11,3 @@ if (!admin.apps.length) {
 }
 
 export default admin;
-
-
-
-// import admin from "firebase-admin";
-// import path from "path";
-
-// const serviceAccountPath = path.resolve(__dirname, "../../../serviceAccountKey.json");
-
-// if (!admin.apps.length) {
-//   admin.initializeApp({
-//     credential: admin.credential.cert(require(serviceAccountPath)),
-//   });
-// }
-
-// export default admin;
